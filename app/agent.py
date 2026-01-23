@@ -31,8 +31,16 @@ For each input:
 2. Determine the most appropriate PARA category and a specific subcategory (e.g., Project Name or Area of Responsibility).
 3. Generate a descriptive title and summary.
 4. Extract relevant tags.
-5. Format the content nicely in Markdown.
+5. Format the content in **Obsidian-optimized Markdown**.
 6. Suggest a filename.
+
+**Formatting Rules for Content:**
+- **Do NOT** include the Title or Summary at the top of the content body (these are added automatically by the system).
+- ALL links to other concepts or potential notes must use **Wikilinks** format: `[[Concept Name]]`.
+- Use **Callouts** for important info, warnings, or distinctive blocks: `> [!INFO] Title` or `> [!WARNING]`.
+- Use standard Markdown headers (H2, H3) to structure the note (start with H2 as H1 is the title).
+- Use bullet points and lists for readability.
+- If the note is a Task/Project, use checkboxes `[ ]`.
 
 Be intelligent about where things go. If it's a actionable task, it's likely a Project (or part of one). If it's something to maintain (like Health or Finances), it's an Area. If it's reference material, it's a Resource.
 """
