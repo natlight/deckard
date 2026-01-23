@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from app.models import ProcessedNote
 
-DATA_DIR = Path("/data")
+DATA_DIR = Path("data")
 
 def save_note(note: ProcessedNote) -> str:
     """
