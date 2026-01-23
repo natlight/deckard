@@ -1,0 +1,8 @@
+pydantic-ai
+openai
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+pyyaml
+aiofiles

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deckard - Second Brain</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        h1, h2 { color: #333; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        textarea { width: 100%; height: 100px; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #output { white-space: pre-wrap; background: #e9ecef; padding: 15px; border-radius: 4px; display: none; }
+        input[type="file"] { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Deckard</h1>
+    
+    <div class="card">
+        <h2>Ingest Text</h2>
+        <textarea id="textInput" placeholder="Enter your note, idea, or task here..."></textarea>
+        <button onclick="sendText()">Process Text</button>
+    </div>
+
+    <div class="card">
+        <h2>Ingest File (Image/Audio)</h2>
+        <input type="file" id="fileInput">
+        <button onclick="sendFile()">Process File</button>
+    </div>
+
+    <div id="output" class="card"></div>
+
+    <script>
+        async function sendText() {
+            const text = document.getElementById('textInput').value;
+            const output = document.getElementById('output');
+            output.style.display = 'block';
+            output.innerText = 'Processing...';
+            
+            try {
+                const response = await fetch('/api/ingest/text', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await response.json();
+                output.innerText = JSON.stringify(data, null, 2);
+            } catch (e) {
+                output.innerText = 'Error: ' + e;
+            }
+        }
+
+        async function sendFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const output = document.getElementById('output');
+            if (!file) return;
+
+            output.style.display = 'block';
+            output.innerText = 'Processing...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            let endpoint = '';
+            if (file.type.startsWith('image/')) {
+                endpoint = '/api/ingest/image';
+            } else if (file.type.startsWith('audio/')) {
+                endpoint = '/api/ingest/audio';
+            } else {
+                output.innerText = 'Unsupported file type';
+                return;
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                output.innerText = JSON.stringify(data, null, 2);
+            } catch (e) {
+                output.innerText = 'Error: ' + e;
+            }
+        }
+    </script>
+</body>
+</html>
