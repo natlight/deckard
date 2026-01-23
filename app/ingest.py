@@ -6,10 +6,54 @@ from openai import AsyncOpenAI
 import os
 import aiofiles
 
+import re
+from youtube_transcript_api import YouTubeTranscriptApi
+
+def extract_video_id(url: str) -> str | None:
+    """
+    Extracts the video ID from a YouTube URL.
+    Supports youtube.com and youtu.be.
+    """
+    # Regex for standard youtube.com and youtu.be URLs
+    # Matches: ?v=ID, &v=ID, /v/ID, /embed/ID, /ID (short), etc.
+    regex = r'(?:v=|\/)([0-9A-Za-z_-]{11}).*'
+    match = re.search(regex, url)
+    if match:
+        return match.group(1)
+    return None
+
+def get_transcript(video_id: str) -> str | None:
+    """
+    Fetches the transcript for a given YouTube video ID.
+    Returns the transcript as a single string or None if failed.
+    """
+    try:
+        # Instantiate the API (v1.2.3+)
+        yt = YouTubeTranscriptApi()
+        # Returns a list of FetchedTranscriptSnippet objects (or similar)
+        transcript_list = yt.fetch(video_id)
+        
+        # Combine valid text parts using object attribute .text
+        full_text = " ".join([item.text for item in transcript_list])
+        return full_text
+    except Exception as e:
+        print(f"Failed to get transcript for {video_id}: {e}")
+        return None
+
 async def process_text(text: str) -> dict:
     """
     Process raw text input using the PydanticAI agent and save the result.
+    If a YouTube URL is found, attempts to fetch and append the transcript.
     """
+    # Check for YouTube URL
+    video_id = extract_video_id(text)
+    if video_id:
+        print(f"Detected YouTube Video ID: {video_id}")
+        transcript = get_transcript(video_id)
+        if transcript:
+            print(f"Fetched transcript ({len(transcript)} chars)")
+            text += f"\n\n--- YOUTUBE TRANSCRIPT ---\n\n{transcript}\n\n--- END TRANSCRIPT ---"
+            
     result = await agent.run(text)
     note: ProcessedNote = result.output
     file_path = save_note(note)

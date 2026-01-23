@@ -42,6 +42,9 @@ For each input:
 - Use bullet points and lists for readability.
 - If the note is a Task/Project, use checkboxes `[ ]`.
 
+**Special Instructions:**
+- If the input contains a **YouTube Transcript**, use it to analyze the video's content. Summarize the key points, extract insights, and treat the transcript as the primary source of information. The title should reflect the VIDEO content.
+
 Be intelligent about where things go. If it's a actionable task, it's likely a Project (or part of one). If it's something to maintain (like Health or Finances), it's an Area. If it's reference material, it's a Resource.
 """
 
