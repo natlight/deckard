@@ -36,3 +36,17 @@ Deckard includes a browser extension for Chrome and Firefox that allows you to q
 2.  The current page Title and URL will be pre-filled.
 3.  Add any optional notes.
 4.  Click **Send to Deckard**.
+
+## Persistence & Scripts
+
+**Chrome**: The extension should persist as long as you do not remove it.
+We have provided a script to launch Chrome with the extension loaded if you prefer:
+```powershell
+.\scripts\launch_deckard_chrome.ps1
+```
+
+**Firefox**: By default, Firefox removes temporary add-ons when you close the browser.
+To keep the extension permanently:
+1.  Use **Firefox Developer Edition** or **Nightly**.
+2.  Go to `about:config` and set `xpinstall.signatures.required` to `false`.
+3.  Pack the extension as a ZIP/XPI and install it from file.
