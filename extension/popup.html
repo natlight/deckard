@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Deckard Saver</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Save to Deckard</h2>
+
+      <div class="input-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" placeholder="Page Title" />
+      </div>
+
+      <div class="input-group">
+        <label for="url">URL</label>
+        <input type="text" id="url" placeholder="https://..." readonly />
+      </div>
+
+      <div class="input-group">
+        <label for="notes">Notes (Optional)</label>
+        <textarea id="notes" placeholder="Why are you saving this?"></textarea>
+      </div>
+
+      <button id="saveBtn">Send to Deckard</button>
+
+      <div id="status" class="status"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

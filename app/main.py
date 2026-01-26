@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from app.ingest import process_text, process_image, process_audio
 import uvicorn
@@ -8,6 +9,14 @@ import os
 import tempfile
 
 app = FastAPI(title="Deckard", description="AI-powered Second Brain", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 class TextIngestRequest(BaseModel):
     text: str
