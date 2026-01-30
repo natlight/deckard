@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -30,11 +30,14 @@ async def ingest_text(request: TextIngestRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/ingest/image")
-async def ingest_image(file: UploadFile = File(...)):
+async def ingest_image(file: UploadFile = File(...), context_text: str = Form(None)):
     try:
         contents = await file.read()
         media_type = file.content_type
-        result = await process_image(contents, media_type)
+        if context_text:
+            result = await process_image(contents, media_type, context_text)
+        else:
+            result = await process_image(contents, media_type)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

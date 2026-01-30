@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Areas/Home_Maintenance/mow-the-lawn-sunday-home-maintenance.md",
+                "file": "Projects/Deckard_(Second_Brain_Assistant)/deckard-project-feature-enhancements-backlog.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mow-the-lawn-sunday-home-maintenance"
+              "title": "deckard-project-feature-enhancements-backlog"
             }
           }
         ]
@@ -185,9 +185,39 @@
   },
   "active": "baf837fb18a08dcf",
   "lastOpenFiles": [
-    "Projects/Project_Beta/project-beta_api-testing-python-script.md",
+    "Resources/Arcade_Cabinet_/_Control_Panels/ultimarc-4-player-arcade-control-panel-link.md",
+    "Resources/Apache_Airflow/airflow-distributed-architecture-webserver-scheduler-executor-queue-workers.md",
     "Areas/Home_Maintenance/mow-the-lawn-sunday-home-maintenance.md",
-    "Areas/Home_Maintenance",
-    "Areas"
+    "Resources/Data_Engineering_-_Apache_Airflow/airflow-distributed-architecture-master-queue-workers-metadata-db.md",
+    "Resources/Data_Engineering_-_Apache_Airflow",
+    "Projects/Deckard_App_Development/deckard-web-ui-create-note-screen-localhost.md",
+    "Resources/Apache_Airflow",
+    "Areas/Health_-_Medical_Records/2021-05-18_covid19-vaccination_jj_tim-rotermann.md",
+    "Areas/Health_-_Medical_Records",
+    "Serverless databases.md",
+    "Projects/Deckard_App_Development",
+    "SQLite.md",
+    "Resources/Strength_Training_(No-Gym_/_Calisthenics)/5-movements-no-gym-naturally-jacked-video-notes.md",
+    "Projects/Deckard_(Second_Brain_Assistant)/deckard-project-feature-enhancements-backlog.md",
+    "Projects/Sewing_Skills/project-learn-to-sew-sweatpants.md",
+    "Projects/Deckard_(Second_Brain_Assistant)",
+    "Resources/Sewing_&_Garment_Making/mens-sweatpants-yardage-french-terry-ribbing-reference.md",
+    "Resources/Vendors_&_Services/ratermann-labs-website.md",
+    "Resources/Tech_News_&_Communities/hacker-news-y-combinator-tech-startup-news-feed.md",
+    "Resources/Vendors_&_Services",
+    "Resources/AI_Tools/merlin-ai-chat-web-app-link.md",
+    "Resources/AI_Tools",
+    "Resources/Arcade_Cabinet_&_Controls_(DIY)/build-your-own-arcade-controls-faq_arcadecontrols.md",
+    "Resources/Arcade_Cabinet_Building/building-arcade-control-panels-black-mdf-pocket-holes-tmolding-inserts.md",
+    "Resources/Tech_News_&_Communities",
+    "Resources/Arcade_Cabinet_&_Controls_(DIY)/build-your-own-arcade-controls-faq-arcadecontrols.md",
+    "Resources/Arcade_Cabinet_&_Controls_(DIY)",
+    "Resources/Arcade_Cabinet_/_Control_Panels",
+    "Resources/Arcade_Cabinet_/_MAME/instructables-4-player-pedestal-arcade-cabinet-for-mame.md",
+    "Projects/Arcade_Build/arcade-build-youtube-reference-cmxcwnl8oyg.md",
+    "Resources/Watch_Later_(YouTube)/youtube-cmxcwnl8oyg-inbox-capture.md",
+    "Resources/YouTube_Playlists/youtube-playlist-PLue_1EGBCMrFHJAtS7R-1KC7DqJMrqW3n.md",
+    "Resources/Databases/turso-libsql-github-repo.md",
+    "Projects/Project_Beta/project-beta_api-testing-python-script.md"
   ]
 }

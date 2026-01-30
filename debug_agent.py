@@ -25,6 +25,10 @@ async def debug():
             
         try:
             print(f"Output: {result.output}")
+            if hasattr(result.output, 'content'):
+                print("\n--- Processed Content ---")
+                print(result.output.content)
+                print("--- End Content ---\n")
         except Exception as e:
             print(f"No .output: {e}")
             
