@@ -7,3 +7,5 @@ python-dotenv
 pyyaml
 aiofiles
 youtube-transcript-api
+anthropic
+google-generativeai
