@@ -14,6 +14,7 @@ tags:
 - beginner-project
 title: Learn to Sew Sweatpants (Project Plan)
 ---
+obsidian://open?vault=data&file=Resources%2FSewing_%26_Garment_Making%2Fmens-sweatpants-yardage-french-terry-ribbing-reference
 
 # Learn to Sew Sweatpants (Project Plan)
 
