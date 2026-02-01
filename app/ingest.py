@@ -1,6 +1,7 @@
 from app.agent import agent, model_name
 from app.models import ProcessedNote
 from app.storage import save_note
+from app.graph import graph
 from pydantic_ai import BinaryContent
 from openai import AsyncOpenAI
 import os
@@ -61,6 +62,10 @@ async def process_text(text: str) -> dict:
     result = await agent.run(text)
     note: ProcessedNote = result.output
     file_path = save_note(note)
+    
+    # Ingest into Knowledge Graph
+    graph.ingest_note(note, file_path)
+    
     logger.info(f"Successfully processed text -> {file_path}")
     return {
         "status": "success",
@@ -80,6 +85,9 @@ async def process_image(image_data: bytes, media_type: str, context_text: str = 
     result = await agent.run(content)
     note: ProcessedNote = result.output
     file_path = save_note(note)
+    
+    # Ingest into Knowledge Graph
+    graph.ingest_note(note, file_path)
     
     logger.info(f"Successfully processed image -> {file_path}")
     return {

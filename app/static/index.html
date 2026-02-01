@@ -78,54 +78,60 @@
 <body>
     <h1>Deckard</h1>
     
-    <div class="card">
-        <h2>Create Note</h2>
-        <div class="input-container" id="dropZone">
-            <textarea id="textInput" placeholder="Enter your note, idea, or parse text / drag & drop images here..."></textarea>
-            <div class="drag-overlay">Drop image here</div>
+    <div style="display: flex; gap: 20px;">
+        <!-- Left Column: Note Ingestion -->
+        <div style="flex: 1;">
+            <div class="card">
+                <h2>Create Note</h2>
+                <div class="input-container" id="dropZone">
+                    <textarea id="textInput" placeholder="Enter your note, idea, or parse text / drag & drop images here..."></textarea>
+                    <div class="drag-overlay">Drop image here</div>
+                </div>
+
+                <div id="filePreview" class="file-preview" style="display: none;">
+                    <span id="fileName"></span>
+                    <button onclick="clearFile()" class="remove-file" title="Remove file">&times;</button>
+                </div>
+
+                <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this.files[0])">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button onclick="document.getElementById('fileInput').click()" class="secondary">Attach Image</button>
+                    <button onclick="sendInput()">Process Note</button>
+                </div>
+            </div>
+
+            <div id="output" class="card"></div>
         </div>
 
-        <div id="filePreview" class="file-preview" style="display: none;">
-            <span id="fileName"></span>
-            <button onclick="clearFile()" class="remove-file" title="Remove file">&times;</button>
-        </div>
-
-        <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this.files[0])">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <button onclick="document.getElementById('fileInput').click()" class="secondary">Attach Image</button>
-            <button onclick="sendInput()">Process</button>
+        <!-- Right Column: Chat -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <div class="card" style="flex-grow: 1; display: flex; flex-direction: column; height: 80vh;">
+                <h2>Chat with Deckard</h2>
+                <div id="chatHistory" style="flex-grow: 1; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 4px; background: #fff;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="chatInput" placeholder="Ask a question..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" onkeypress="if(event.key==='Enter') sendChat()">
+                    <button onclick="sendChat()">Send</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="output" class="card"></div>
-
     <script>
+        // --- Note Ingestion Logic ---
         let currentFile = null;
-
         const dropZone = document.getElementById('dropZone');
         const textInput = document.getElementById('textInput');
         const filePreview = document.getElementById('filePreview');
         const fileName = document.getElementById('fileName');
 
         // Drag and Drop Events
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('drag-over');
-        });
-
-        dropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-        });
-
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); });
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('drag-over');
-            
-            if (e.dataTransfer.files.length > 0) {
-                handleFileSelect(e.dataTransfer.files[0]);
-            }
+            if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files[0]);
         });
 
         // Paste Event
@@ -169,55 +175,20 @@
 
             try {
                 if (currentFile) {
-                    // Send as File (Image/Audio) with optional context text
                     const formData = new FormData();
                     formData.append('file', currentFile);
-                    if (text) {
-                        formData.append('context_text', text);
-                    }
+                    if (text) formData.append('context_text', text);
                     
-                    let endpoint = '';
-                    if (currentFile.type.startsWith('image/')) {
-                        endpoint = '/api/ingest/image';
-                    } else if (currentFile.type.startsWith('audio/')) {
-                        endpoint = '/api/ingest/audio';
-                    } else {
-                        // Fallback or error
-                        // For now let's assume image/audio or backend validation
-                         if (currentFile.type.startsWith('image/') || currentFile.type.startsWith('audio/')) {
-                             // ok
-                         } else {
-                             // Try image endpoint as default or show error?
-                             // Original code showed error.
-                             output.innerText = 'Unsupported file type: ' + currentFile.type;
-                             return;
-                         }
-                    }
-                    // Audio endpoint doesn't support context_text yet in my changes to main.py?
-                    // Checked main.py: ingest_audio does NOT have context_text.
-                    // So if audio, we ignore text? Or we should have updated audio too?
-                    // Feature request was "allow pasting images". 
-                    // I'll stick to image endpoint having context.
-                    // If audio, I will warn if text is present or just ignore it.
-                    if (endpoint.includes('audio') && text) {
-                         console.warn("Text context ignored for audio file.");
-                    }
+                    let endpoint = '/api/ingest/image'; 
+                    // Simple heuristic for now
+                    if (currentFile.type.startsWith('audio/')) endpoint = '/api/ingest/audio';
 
-                     if (!endpoint) endpoint = '/api/ingest/image'; // Default attempt
-
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        body: formData
-                    });
+                    const response = await fetch(endpoint, { method: 'POST', body: formData });
                     const data = await response.json();
                     output.innerText = JSON.stringify(data, null, 2);
-                    
-                    // Clear file after success
                     clearFile();
                     textInput.value = '';
-
                 } else {
-                    // Send as Text
                     const response = await fetch('/api/ingest/text', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -229,6 +200,53 @@
                 }
             } catch (e) {
                 output.innerText = 'Error: ' + e;
+            }
+        }
+
+        // --- Chat Logic ---
+        let sessionId = null;
+        const chatHistory = document.getElementById('chatHistory');
+        const chatInput = document.getElementById('chatInput');
+
+        function appendMessage(role, text) {
+            const dive = document.createElement('div');
+            dive.style.marginBottom = '10px';
+            dive.style.padding = '8px';
+            dive.style.borderRadius = '4px';
+            
+            if (role === 'user') {
+                dive.style.background = '#e3f2fd';
+                dive.style.textAlign = 'right';
+                dive.style.marginLeft = '20%';
+                dive.innerHTML = `<strong>You:</strong> <br>${text}`;
+            } else {
+                dive.style.background = '#f1f3f4';
+                dive.style.marginRight = '20%';
+                dive.innerHTML = `<strong>Deckard:</strong> <br>${text.replace(/\n/g, '<br>')}`;
+            }
+            chatHistory.appendChild(dive);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        async function sendChat() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            appendMessage('user', message);
+            chatInput.value = '';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, session_id: sessionId })
+                });
+                const data = await response.json();
+                
+                if (data.session_id) sessionId = data.session_id;
+                appendMessage('agent', data.response);
+            } catch (e) {
+                appendMessage('agent', 'Error: ' + e);
             }
         }
     </script>

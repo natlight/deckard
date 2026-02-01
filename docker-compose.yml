@@ -7,3 +7,28 @@ services:
       - .:/app
     env_file:
       - .env
+
+  neo4j:
+    image: neo4j:latest
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./data/neo4j:/data
+      - ./data/neo4j/logs:/logs
+    environment:
+      - NEO4J_AUTH=neo4j/password
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3000:8080"
+    environment:
+      - OPENAI_API_BASE_URL=http://deckard:8000/v1
+      - OPENAI_API_KEY=deckard-secret-key
+      - WEBUI_SECRET_KEY=deckard-secret-key
+    volumes:
+      - ./data/open-webui:/app/backend/data
+    depends_on:
+      - deckard
+    restart: unless-stopped
