@@ -4,7 +4,9 @@ from datetime import datetime
 from pathlib import Path
 from app.models import ProcessedNote
 
-DATA_DIR = Path("data")
+# BASE_DIR is the project root, derived from this file's location
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "deckard-vault"
 
 def save_note(note: ProcessedNote) -> str:
     """
@@ -47,7 +49,7 @@ def save_note(note: ProcessedNote) -> str:
     # Git Commit and Push
     try:
         # Check if we are in a git repo
-        if (Path(os.getcwd()) / ".git").exists():
+        if (BASE_DIR / ".git").exists():
             import subprocess
             
             # Helper to run command
