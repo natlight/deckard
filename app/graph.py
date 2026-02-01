@@ -28,6 +28,27 @@ class GraphManager:
         if self.driver:
             self.driver.close()
 
+    def clear_database(self):
+        """
+        Deletes all nodes and relationships in the database.
+        Use with caution!
+        """
+        if not self.driver:
+            self.connect()
+            
+        if not self.driver:
+            logger.error("Cannot clear database: No active connection")
+            return False
+            
+        try:
+            query = "MATCH (n) DETACH DELETE n"
+            self.driver.execute_query(query, database_="neo4j")
+            logger.warning("CLEARED ENTIRE KNOWLEDGE GRAPH")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to clear database: {e}")
+            return False
+
     def query(self, query: str, parameters: dict = None, db: str = None):
         if not self.driver:
             self.connect()
