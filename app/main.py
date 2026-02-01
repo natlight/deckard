@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,6 +8,10 @@ import uvicorn
 import shutil
 import os
 import tempfile
+
+# Configure logging for the application if not already configured by imported modules
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Deckard", description="AI-powered Second Brain", version="0.1.0")
 
