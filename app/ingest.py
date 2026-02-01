@@ -5,9 +5,12 @@ from pydantic_ai import BinaryContent
 from openai import AsyncOpenAI
 import os
 import aiofiles
+import logging
 
 import re
 from youtube_transcript_api import YouTubeTranscriptApi
+
+logger = logging.getLogger(__name__)
 
 def extract_video_id(url: str) -> str | None:
     """
@@ -37,7 +40,7 @@ def get_transcript(video_id: str) -> str | None:
         full_text = " ".join([item.text for item in transcript_list])
         return full_text
     except Exception as e:
-        print(f"Failed to get transcript for {video_id}: {e}")
+        logger.warning(f"Failed to get transcript for {video_id}: {e}")
         return None
 
 async def process_text(text: str) -> dict:
@@ -47,16 +50,18 @@ async def process_text(text: str) -> dict:
     """
     # Check for YouTube URL
     video_id = extract_video_id(text)
+    
     if video_id:
-        print(f"Detected YouTube Video ID: {video_id}")
+        logger.info(f"Detected YouTube Video ID: {video_id}")
         transcript = get_transcript(video_id)
         if transcript:
-            print(f"Fetched transcript ({len(transcript)} chars)")
+            logger.info(f"Fetched transcript ({len(transcript)} chars)")
             text += f"\n\n--- YOUTUBE TRANSCRIPT ---\n\n{transcript}\n\n--- END TRANSCRIPT ---"
             
     result = await agent.run(text)
     note: ProcessedNote = result.output
     file_path = save_note(note)
+    logger.info(f"Successfully processed text -> {file_path}")
     return {
         "status": "success",
         "file_path": file_path,
@@ -76,6 +81,7 @@ async def process_image(image_data: bytes, media_type: str, context_text: str = 
     note: ProcessedNote = result.output
     file_path = save_note(note)
     
+    logger.info(f"Successfully processed image -> {file_path}")
     return {
         "status": "success",
         "file_path": file_path,
@@ -110,9 +116,11 @@ async def process_audio(audio_path: str) -> dict:
             )
         
         text = transcription.text
+        logger.info(f"Audio transcription complete: {len(text)} chars")
         # Process the transcribed text
         return await process_text(text)
         
     except Exception as e:
         # Fallback for debugging - if transcription fails, maybe just log it
+        logger.error(f"Audio processing failed: {e}")
         raise e

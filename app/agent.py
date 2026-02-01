@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from pydantic_ai import Agent
@@ -11,9 +12,14 @@ from openai import AsyncOpenAI
 load_dotenv()
 
 # Configuration
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 # options: openrouter, openai, gemini, claude
 llm_provider = os.getenv("LLM_PROVIDER", "openrouter").lower()
 
+logger.info(f"Initializing Deckard Agent with Provider: {llm_provider}")
 print(f"Initializing Deckard Agent with Provider: {llm_provider}")
 
 model = None
@@ -130,6 +136,9 @@ For each input:
 **Special Instructions:**
 - **Do NOT** output any markdown fencing like ```markdown or ``` around the entire response. Just the raw markdown content.
 - If the input contains a **YouTube Transcript**, use it to analyze the video's content. Summarize the key points, extract insights, and treat the transcript as the primary source of information. The title should reflect the VIDEO content.
+- **Resource Linking**: ALWAYS try to link new Resources back to relevant existing Projects or Areas using `[[Project Name]]` wikilinks. Infer connections if they are not explicitly stated.
+- **Consolidation**: Consolidate Resources into appropriate higher-level folders. Avoid creating too many narrow subcategories. For example, use 'Programming' instead of 'Python Loops'. 
+- **Project Structure**: When creating a new Project, list potential related Resources or Areas to link to.
 
 Be intelligent about where things go. If it's a actionable task, it's likely a Project (or part of one). If it's something to maintain (like Health or Finances), it's an Area. If it's reference material, it's a Resource.
 """

@@ -1,8 +1,10 @@
-import os
+import logging
 import yaml
 from datetime import datetime
 from pathlib import Path
 from app.models import ProcessedNote
+
+logger = logging.getLogger(__name__)
 
 # BASE_DIR is the project root, derived from this file's location
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +29,8 @@ def save_note(note: ProcessedNote) -> str:
         filename += ".md"
     
     file_path = subcategory_dir / filename
+    
+    logger.info(f"Saving note '{note.title}' to {file_path}")
     
     # Prepare Frontmatter
     frontmatter = {
@@ -63,9 +67,9 @@ def save_note(note: ProcessedNote) -> str:
             run_git(["add", str(file_path)])
             run_git(["commit", "-m", f"Add note: {note.title}"])
             run_git(["push"])
-            print(f"Synced {filename} to GitHub.")
+            logger.info(f"Synced {filename} to GitHub.")
             
     except Exception as e:
-        print(f"Git sync failed: {e}")
+        logger.error(f"Git sync failed: {e}")
     
     return str(file_path)
