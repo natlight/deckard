@@ -9,3 +9,4 @@ aiofiles
 youtube-transcript-api
 anthropic
 google-generativeai
+neo4j

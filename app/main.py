@@ -69,5 +69,41 @@ if not os.path.exists(static_dir):
     os.makedirs(static_dir)
 app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
+# --- Chat Endpoint ---
+from app.agent import chat_agent
+from pydantic_ai.messages import ModelMessage
+import uuid
+
+# Simple in-memory session store: session_id -> list[ModelMessage]
+sessions: dict[str, list[ModelMessage]] = {}
+
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str | None = None
+
+@app.post("/api/chat")
+async def chat_endpoint(request: ChatRequest):
+    session_id = request.session_id or str(uuid.uuid4())
+    
+    # Retrieve history or start fresh
+    history = sessions.get(session_id, [])
+    
+    try:
+        # Run agent with history
+        # PydanticAI manages history appending if we pass it correctly
+        result = await chat_agent.run(request.message, message_history=history)
+        
+        # Update history with new messages (User + AI response)
+        # result.new_messages() returns the messages added during this run
+        sessions[session_id] = history + result.new_messages()
+        
+        return {
+            "response": result.data,
+            "session_id": session_id
+        }
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

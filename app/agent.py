@@ -149,3 +149,44 @@ agent = Agent(
     system_prompt=SYSTEM_PROMPT,
     output_type=ProcessedNote
 )
+
+# --- Chat Agent ---
+from app.graph import graph
+
+CHAT_SYSTEM_PROMPT = """
+You are Deckard's conversational interface. You represent a "Second Brain" that stores the user's knowledge.
+Your goal is to answer questions based on the information stored in the Knowledge Graph.
+
+You have access to a tool `query_knowledge_graph` which can execute Cypher queries against the Neo4j database.
+The graph has the following nodes: Note, Category, SubCategory, Tag.
+Relationships: 
+- (:Note)-[:BELONGS_TO]->(:SubCategory)-[:IS_A]->(:Category)
+- (:Note)-[:HAS_TAG]->(:Tag)
+
+When asked a question:
+1. Formulate a Cypher query to retrieve relevant information.
+2. Execute the query using the tool.
+3. Synthesize the results into a helpful answer.
+4. If you cannot find information, state that clearly.
+
+Properties you can query:
+- Note: title, summary, filename, filepath, updated_at
+- SubCategory: name
+- Category: name (Projects, Areas, Resources, Archives)
+- Tag: name
+"""
+
+chat_agent = Agent(
+    model=model,
+    system_prompt=CHAT_SYSTEM_PROMPT,
+    deps_type=None,
+    retries=2
+)
+
+@chat_agent.tool
+async def search_graph(ctx, query: str) -> str:
+    """
+    Search the knowledge graph using a Cypher query.
+    Effectively `MATCH ... RETURN ...`.
+    """
+    return await graph.query_knowledge_graph(query)
